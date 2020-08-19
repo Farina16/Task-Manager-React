@@ -1,0 +1,102 @@
+$purple: #8b6fae;
+$white: #ffffff;
+
+.App {
+  text-align: center;
+  background-color: #282c34;
+  min-height: 100vh;
+  height: max-content;
+  width: 100%;
+
+  h1 {
+    margin: 0px;
+    padding: 20px 0px;
+    color: $purple;
+  }
+
+  .app-container {
+    width: 80%;
+    height: 100%;
+    margin: auto;
+
+    .btn {
+      padding: 7px 15px;
+      border-radius: 5px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .add-server-btn {
+      background-color: $purple;
+      border: 1px solid $purple;
+      color: $white;
+      margin-right: 20px;
+    }
+
+    .remove-server-btn {
+      background-color: $white;
+      border: 1px solid $purple;
+      color: $purple;
+    }
+
+    .task-container {
+      margin: 30px 0px 20px; 
+      text-align: left;
+      .add-dropdown {
+        background-color: $white;
+        border: 1px solid $purple;
+        color: $purple;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .add-task-btn {
+        background-color: $purple;
+        border: 1px solid $purple;
+        color: $white;
+        margin-left: 10px;
+        margin-bottom: 30px;
+        padding: 6px 15px;
+      }
+
+      .waiting-task {
+        display: flex;
+        color: $purple;
+        justify-content: space-between;
+
+        .task-bar {
+          padding: 6px 0px;
+        }
+
+        .remove-task-btn {
+          background-color: $white;
+          border: 3px solid $purple;
+          color: $purple;
+          margin: 10px 0px;
+          padding: 5px 8px;
+          font-size: 20px;
+        }
+      }
+
+      .task-bar {
+        background-color: $white;
+        width: 90%;
+        border: 3px solid $purple;
+        border-radius: 5px;
+        margin: 10px 0px;
+        text-indent: 10px;
+
+        .task-progress-bar {
+          background-color: $purple;
+          height: 100%;
+          padding: 5px 0px;
+          color: $white;
+          transition: width 2s;
+        }
+      }
+      
+    }
+  }
+}
