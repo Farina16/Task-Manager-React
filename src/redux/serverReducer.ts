@@ -1,74 +1,74 @@
 import { createSlice } from '@reduxjs/toolkit';
 import _cloneDeep from 'lodash/cloneDeep';
+import _drop from 'lodash/drop';
 import _dropRight from 'lodash/dropRight';
 
 export interface IServer {
   id: number;
   tasks: string[];
-  taskCount: number;
+  status: string;
 }
 
 interface IServerState {
   servers: IServer[];
+  tasks: string[];
 }
 
 const initialState: IServerState = {
   servers: [],
+  tasks: [],
 };
 
 const serverSlice = createSlice({
   name: 'server',
   initialState: initialState,
   reducers: {
-    addServer: (state) => ({
-      ...state,
-      servers:
-        state.servers.length < 10
-          ? [...state.servers, { id: state.servers.length + 1, tasks: [], taskCount: 1 }]
-          : [...state.servers],
-    }),
+    addServer: (state) => {
+      return {
+        ...state,
+        servers:
+          state.servers.length < 10
+            ? [
+                ...state.servers,
+                {
+                  id: state.servers.length + 1,
+                  tasks: state.tasks.length > 0 ? ['start'] : [],
+                  status: state.tasks.length > 0 ? 'active' : 'idle',
+                },
+              ]
+            : [...state.servers],
+        tasks: state.servers.length < 10 && state.tasks.length > 0 ? _drop(state.tasks, 1) : [],
+      };
+    },
     removeServer: (state) => ({
       ...state,
       servers: _dropRight(state.servers, 1),
     }),
-    addServerTask: (_state, action) => {
+    addTask: (state) => ({
+      ...state,
+      tasks: state.tasks.find((task: string) => task === 'start')
+        ? [...state.tasks, 'pending']
+        : [...state.tasks, 'start'],
+    }),
+    removeTask: (_state, action) => {
       const state = _cloneDeep(_state);
-      const { serverId, updatetasks } = action.payload;
-      const index = state.servers.findIndex((server) => server.id === serverId);
-      state.servers[index].tasks = updatetasks;
+      state.tasks.length > 0 && state.tasks.splice(action.payload.taskIndex, 1);
       return {
         ...state,
-        servers: [...state.servers],
+        tasks: [...state.tasks],
       };
     },
-    removeServerTask: (_state, action) => {
+    updateServerTasks: (_state, action) => {
       const state = _cloneDeep(_state);
-      const { serverId, taskIndex } = action.payload;
-      const index = state.servers.findIndex((server) => server.id === serverId);
-      state.servers[index].tasks.splice(taskIndex, 1);
+      const index = state.servers.findIndex((server) => server.id === action.payload.serverId);
+      const stasks = state.servers[index].tasks;
+      stasks[stasks.length - 1] = 'complete';
+      state.servers[index].tasks = state.tasks.length > 0 ? [...stasks, 'start'] : [...stasks];
+      state.servers[index].status = state.tasks.length > 0 ? 'active' : 'idle';
       return {
         ...state,
         servers: [...state.servers],
-      };
-    },
-    setTaskCount: (_state, action) => {
-      const state = _cloneDeep(_state);
-      const { serverId, taskCount } = action.payload;
-      const index = state.servers.findIndex((server) => server.id === serverId);
-      state.servers[index].taskCount = taskCount;
-      return {
-        ...state,
-        servers: [...state.servers],
-      };
-    },
-    changeTaskStatus: (_state, action) => {
-      const state = _cloneDeep(_state);
-      const { serverId, taskIndex, status } = action.payload;
-      const index = state.servers.findIndex((server) => server.id === serverId);
-      state.servers[index].tasks[taskIndex] = status;
-      return {
-        ...state,
-        servers: [...state.servers],
+        tasks: state.tasks.length > 0 ? _drop(state.tasks, 1) : [],
       };
     },
   },
@@ -77,10 +77,9 @@ const serverSlice = createSlice({
 export const {
   addServer,
   removeServer,
-  addServerTask,
-  removeServerTask,
-  setTaskCount,
-  changeTaskStatus,
+  addTask,
+  removeTask,
+  updateServerTasks,
 } = serverSlice.actions;
 
 export default serverSlice.reducer;

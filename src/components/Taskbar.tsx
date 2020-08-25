@@ -9,7 +9,9 @@ const Taskbar = ({status, updateTask}: IProps) => {
   const [counter, setCounter] = useState(20);
   
   useEffect(() => {
-    counter === 0 && setTimeout(() => updateTask(), 200);
+    counter === 0 && setTimeout(() => {
+      updateTask()
+    }, 200);
     counter > 0 && setTimeout(() => (setCounter(counter - 1)), 1000)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [counter])
